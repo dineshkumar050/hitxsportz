@@ -46,7 +46,9 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount: 500 }), // INR 500
         });
+        console.log(3);
         const order = await orderRes.json();
+        console.log(4);
         var options = {
           key: "<%= process.env.RAZORPAY_KEY_ID %>", // Replace with your key
           amount: order.amount,

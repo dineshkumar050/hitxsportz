@@ -138,7 +138,7 @@ app.post("/create-order", async (req, res) => {
     const options = {
       amount: amount * 100, // amount in paise
       currency: currency || "INR",
-      receipt: "receipt#1",
+      receipt: "receipt" + Date.now(),
       payment_capture: 1, // auto capture
     };
     console.log(1);
