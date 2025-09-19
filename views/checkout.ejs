@@ -34,12 +34,16 @@
           <input type="text" class="form-control" name="postal" required />
         </div>
         <div class="text-center">
-          <button id="payBtn" class="btn btn-primary">Place Order</button>
+          <button id="payBtn" type="submit" class="btn btn-primary">
+            Place Order
+          </button>
         </div>
       </form>
     </div>
     <script>
-      document.getElementById("payBtn").onclick = async function () {
+      document.getElementById("payBtn").onclick = async function (e) {
+        e.preventDefault();
+        console.log(document.querySelector('input[name="name"]').value);
         const orderRes = await fetch("/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
