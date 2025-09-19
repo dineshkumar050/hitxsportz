@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Your Cart</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/">🏏 Cricket Store</a>
+        <div>
+          <a href="/cart" class="btn btn-outline-light">Cart</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-5">
+      <h1 class="text-center mb-4">Shopping Cart</h1>
+      <% if (cart.length === 0) { %>
+      <div class="alert alert-warning text-center">
+        Your cart is empty. <a href="/" class="alert-link">Go shopping!</a>
+      </div>
+      <% } else { %>
+      <ul class="list-group mb-3">
+        <% cart.forEach((item, index) => { %>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          <div>
+            <%= item.name %>
+            <span class="text-muted"> - $<%= item.price %></span>
+          </div>
+          <form action="/remove-from-cart" method="POST" style="margin: 0">
+            <input type="hidden" name="index" value="<%= index %>" />
+            <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+          </form>
+        </li>
+        <% }) %>
+      </ul>
+
+      <h4 class="text-end mb-3">Total: $<%= total %></h4>
+
+      <div class="text-center">
+        <a href="/checkout" class="btn btn-success">Checkout</a>
+      </div>
+      <% } %>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "hitxwebsite",
+  "version": "1.0.0",
+  "description": "This project is to create a simple website for HitXSportz",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "nodemailer": "^7.0.6",
+    "nodemon": "^3.1.10"
+  }
+}
