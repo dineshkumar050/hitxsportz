@@ -40,7 +40,6 @@
     </div>
     <script>
       document.getElementById("payBtn").onclick = async function () {
-        console.log(document.getElementsByName("name").value);
         const orderRes = await fetch("/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
