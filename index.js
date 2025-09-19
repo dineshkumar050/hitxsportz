@@ -1,12 +1,21 @@
 import express from "express";
 import session from "express-session";
+import Razorpay from "razorpay";
 import nodemailer from "nodemailer";
-
+import dotenv from "dotenv";
+import bodyParser from "body-parser";
+import crypto from "crypto";
+dotenv.config();
 const app = express();
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 app.use(
   session({
     secret: "secretkey",
@@ -104,17 +113,64 @@ Cricket Store Team
 
   try {
     await transporter.sendMail(mailOptions);
-    res.send(`
-      <h1>Order Placed ✅</h1>
-      <p>Thank you, ${name}. A confirmation email has been sent to <b>${email}</b>.</p>
-      <a href="/">Go back to store</a>
-    `);
     req.session.cart = [];
+    res.json({ success: true, redirect: "/payment-success" });
   } catch (err) {
     console.error("Email error:", err);
-    res.send("<h1>Order Placed, but email could not be sent ❌</h1>");
+    res.json({ success: true, redirect: "/payment-success" });
   }
 });
+
+app.get("/payment-success", (req, res) => {
+  res.send(`<h1>Order Placed ✅</h1>
+      <p>Thank you. A confirmation email has been sent</b>.</p>
+      <a href="/">Go back to store</a>`);
+});
+
+app.get("/payment-failure", (req, res) => {
+  res.send("<h1>Order Placed, but email could not be sent ❌</h1>");
+});
+
+app.post("/create-order", async (req, res) => {
+  const { amount, currency } = req.body;
+
+  try {
+    const options = {
+      amount: amount * 100, // amount in paise
+      currency: currency || "INR",
+      receipt: "receipt#1",
+      payment_capture: 1, // auto capture
+    };
+    console.log(1);
+    const order = await razorpay.orders.create(options);
+    console.log(order);
+    console.log(2);
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Payment verification
+app.post("/verify-payment", (req, res) => {
+  //const crypto = require("crypto");
+  console.log(req.body);
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    req.body;
+
+  const body = razorpay_order_id + "|" + razorpay_payment_id;
+  const expectedSignature = crypto
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+    .update(body.toString())
+    .digest("hex");
+
+  if (expectedSignature === razorpay_signature) {
+    res.json({ success: true });
+  } else {
+    res.status(400).json({ success: false });
+  }
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("Server running on http://localhost:3000");
